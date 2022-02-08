@@ -3,8 +3,15 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import PrismicVue from '@prismicio/vue'
+
+const endpoint = "https://jankristofercruz-dot-com.prismic.io/api/v2"
 
 Vue.config.productionTip = false
+
+Vue.use(PrismicVue, {
+  endpoint
+})
 
 new Vue({
   router,
