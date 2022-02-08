@@ -1,7 +1,5 @@
 <template>
-  <v-container>
-    <photo-aggregate aggregate-id="home_aggregate"></photo-aggregate>
-  </v-container>
+  <photo-aggregate aggregate-id="home_aggregate"></photo-aggregate>
 </template>
 
 <script>
