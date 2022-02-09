@@ -14,49 +14,27 @@
 import prismicHelper from "../../utility/prismicHelper.js";
 
 export default {
-  // props: ["photoOrSeries"],
-
   props: {
     photoOrSeries: {
       type: Object,
     },
-    position: {
-      type: String,
+  },
+
+  data: () => ({}),
+
+  computed: {
+    src() {
+      return this.photoOrSeries.photoObject.photo.url;
+    },
+    position() {
+      return this.photoOrSeries.yPos + " " + this.photoOrSeries.xPos;
     },
   },
 
-  data: () => ({
-    src: "",
-  }),
-
-  computed: {},
-
-  methods: {
-    async getAggregatePhoto(item) {
-      switch (item.type) {
-        case "photo_series":
-          this.src = await prismicHelper.getCoverImageInSeries(
-            this.$prismic,
-            item.uid
-          );
-          break;
-
-        case "photo":
-          this.src = await prismicHelper.getImageByPhotoID(
-            this.$prismic,
-            item.uid
-          );
-          break;
-
-        default:
-          this.src = "";
-          break;
-      }
-    },
-  },
+  methods: {},
 
   created() {
-    this.getAggregatePhoto(this.photoOrSeries);
+    console.log(JSON.stringify(this.photoOrSeries));
   },
 };
 </script>

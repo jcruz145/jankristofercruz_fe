@@ -12,5 +12,19 @@ export default {
     return await this.getImageByPhotoID(
       prismic, response.results[0].data.cover_image.uid
     );
+  },
+  async getPhotoObject(prismic, uid) {
+    const response = await prismic.client.query([
+      prismic.Predicates.at("my.photo.uid", uid),
+    ]);
+    return await response.results[0].data;
+  },
+  async getCoverPhotoObjectInSeries(prismic, uid) {
+    const response = await prismic.client.query([
+      prismic.Predicates.at("my.photo_series.uid", uid),
+    ]);
+    return await this.getPhotoObject(
+      prismic, response.results[0].data.cover_image.uid
+    );
   }
 };

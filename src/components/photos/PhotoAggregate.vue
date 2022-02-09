@@ -1,13 +1,13 @@
 <template>
   <v-row justify="center">
     <v-col
-      sm="6"
-      v-for="photoOrSeries in aggregate"
-      :key="photoOrSeries.item.id"
+      v-for="photoOrSeries in processedCollection"
+      :key="photoOrSeries.id"
       :align-self="photoOrSeries.yPos"
+      :sm="photoOrSeries.photoObject.full ? '12' : '6'"
     >
       <aggregate-photo
-        :photo-or-series="photoOrSeries.item"
+        :photo-or-series="photoOrSeries"
         :position="photoOrSeries.xPos"
       ></aggregate-photo>
     </v-col>
@@ -16,6 +16,7 @@
 
 <script>
 import AggregatePhoto from "./AggregatePhoto.vue";
+import prismicHelper from "../../utility/prismicHelper";
 
 export default {
   props: {
@@ -26,34 +27,66 @@ export default {
 
   data: () => ({
     aggregate: [],
+    processedCollection: [],
     page: null,
+    loading: true,
   }),
 
   computed: {},
 
   methods: {
     async getAggregate() {
-      const response = await this.$prismic.client.query([
+      let response = await this.$prismic.client.query([
         this.$prismic.Predicates.at("my.photo_aggregate.uid", this.aggregateId),
       ]);
 
-      response.results[0].data.photos_and_series.forEach((item, i) => {
-        const idx = i + 1;
-        if (idx % 4 <= 2 && idx % 4 != 0) {
-          item.yPos = "end";
-        } else {
-          item.yPos = "start";
-        }
+      this.page = response.page;
 
-        if (idx % 2 == 0) {
-          item.xPos = "left";
-        } else {
-          item.xPos = "right";
-        }
-        this.aggregate.push(item);
+      let exect = [];
+
+      response.results[0].data.photos_and_series.forEach((item) => {
+        this.aggregate.push({ ...item.item });
       });
 
-      this.page = response.page;
+      this.aggregate.forEach((item, i) => {
+        process = async () => {
+          switch (item.type) {
+            case "photo_series":
+              this.aggregate[i].photoObject =
+                await prismicHelper.getCoverPhotoObjectInSeries(
+                  this.$prismic,
+                  item.uid
+                );
+              break;
+
+            case "photo":
+              this.aggregate[i].photoObject =
+                await prismicHelper.getPhotoObject(this.$prismic, item.uid);
+              break;
+
+            default:
+              break;
+          }
+
+          const idx = i + 1;
+
+          if (this.aggregate[i].photoObject.full) {
+            this.aggregate[i].yPos = "center";
+            this.aggregate[i].xPos = "center";
+          } else {
+            this.aggregate[i].yPos =
+              idx % 4 <= 2 && idx % 4 != 0 ? "end" : "start";
+
+            this.aggregate[i].xPos = idx % 2 == 0 ? "left" : "right";
+          }
+        };
+
+        exect.push(process());
+      });
+
+      await Promise.all(exect);
+
+      this.processedCollection = this.aggregate;
     },
   },
 

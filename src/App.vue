@@ -1,6 +1,10 @@
 <template>
   <v-app>
-    <v-app-bar app color="transparent" elevation="0">
+    <v-app-bar
+      app
+      :color="$vuetify.breakpoint.mdAndDown ? 'white' : 'transparent'"
+      elevation="0"
+    >
       <v-toolbar-title>Jan Kristofer Cruz</v-toolbar-title>
     </v-app-bar>
     <v-main>
@@ -16,6 +20,8 @@ export default {
   data: () => ({
     //
   }),
+
+  computed: {},
 };
 </script>
 
