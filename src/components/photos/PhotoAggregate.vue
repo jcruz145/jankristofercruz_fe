@@ -1,38 +1,36 @@
 <template>
   <div class="aggregate-container">
     <div
-      ref="horizontalScrollContainer"
       v-if="horizontal"
       class="horizontal-scroll-container"
+      ref="horizontalScrollContainer"
     >
       <div
-        v-for="photoOrSeries in processedCollection"
-        :key="photoOrSeries.id"
+        v-for="item in processedCollection"
+        :key="item.id"
         class="horizontal-scroll-capsule"
       >
         <aggregate-photo
-          :photo-or-series="photoOrSeries"
-          :position="photoOrSeries.xPos"
+          horizontal
+          :photo-or-series="item"
           :container-height="horizontalAggregateHeight"
-          :parallax-coefficient="parallaxCoefficient"
-          :parallax-width="parallaxWidth"
           :horizontal-aggregate-width="horizontalAggregateWidth"
           :horizontal-aggregate-center-x="horizontalAggregateCenterX"
           :scrolling="scrolling"
-          class="aggregate-photo"
         ></aggregate-photo>
       </div>
     </div>
     <v-row v-else justify="center">
       <v-col
-        v-for="photoOrSeries in processedCollection"
-        :key="photoOrSeries.id"
-        :align-self="photoOrSeries.yPos"
-        :sm="photoOrSeries.photoObject.full ? '12' : '6'"
+        v-for="item in processedCollection"
+        :key="item.id"
+        :align-self="item.yPos"
+        :sm="item.photoObject.full ? '12' : '6'"
+        cols="12"
       >
         <aggregate-photo
-          :photo-or-series="photoOrSeries"
-          :position="photoOrSeries.xPos"
+          :photo-or-series="item"
+          :position="item.xPos"
         ></aggregate-photo>
       </v-col>
     </v-row>
@@ -127,19 +125,51 @@ export default {
       await Promise.all(exect);
     },
     addEventListenters() {
-      this.$refs.horizontalScrollContainer.addEventListener("wheel", (evt) => {
-        evt.preventDefault();
-        this.$refs.horizontalScrollContainer.scrollLeft += evt.deltaY;
-      });
+      if (!this.horizontal) {
+      } else {
+        const scrollContainer = this.$refs.horizontalScrollContainer;
 
-      this.$refs.horizontalScrollContainer.addEventListener("scroll", (evt) => {
-        this.updateHorizontalAggregateParallax();
-      });
+        this.$refs.horizontalScrollContainer.addEventListener("wheel", (e) => {
+          e.preventDefault();
+          this.$refs.horizontalScrollContainer.scrollLeft += e.deltaY;
+        });
 
-      window.addEventListener(
-        "resize",
-        _.debounce(this.updateHorizontalAggregateHeight, 200)
-      );
+        // Mouse Dragging
+
+        let mouseDown = false;
+        let startX, scrollLeft;
+        scrollContainer.addEventListener("mousedown", (e) => {
+          mouseDown = true;
+          startX = e.pageX - scrollContainer.offsetLeft;
+          scrollLeft = scrollContainer.scrollLeft;
+          console.log("mouseDown, startX: " + startX);
+        });
+        scrollContainer.addEventListener("mouseup", (e) => {
+          mouseDown = false;
+        });
+        scrollContainer.addEventListener("mouseleave", (e) => {
+          mouseDown = false;
+        });
+        scrollContainer.addEventListener("mousemove", (e) => {
+          e.preventDefault();
+          console.log("movin");
+          if (!mouseDown) {
+            return;
+          }
+          const x = e.pageX - scrollContainer.offsetLeft;
+          const scroll = x - startX;
+          scrollContainer.scrollLeft = scrollLeft - scroll;
+        });
+
+        this.$refs.horizontalScrollContainer.addEventListener("scroll", (e) => {
+          this.updateHorizontalAggregateParallax();
+        });
+
+        window.addEventListener(
+          "resize",
+          _.debounce(this.updateHorizontalAggregateHeight, 200)
+        );
+      }
     },
     async onCreated() {
       await this.getAggregate();
@@ -147,13 +177,9 @@ export default {
       this.updateHorizontalAggregateHeight();
       this.updateHorizontalAggregateParallax();
       this.addEventListenters();
-      this.mounted &&
-        console.log(
-          this.$el.querySelectorAll(".horizontal-scroll-container")[0]
-            .childNodes[0]
-        );
     },
     updateHorizontalAggregateHeight() {
+      if (!this.horizontal) return;
       const y = this.$refs.horizontalScrollContainer.getBoundingClientRect().y;
       const windowHeight = window.innerHeight;
 
@@ -162,18 +188,17 @@ export default {
         this.horizontalAggregateHeight + "px";
     },
     updateHorizontalAggregateParallax() {
+      if (!this.horizontal) return;
       clearTimeout(this.scrollTimer);
       this.scrolling = true;
       this.scrollTimer = window.setTimeout(() => {
         this.scrolling = false;
-      }, 100);
+      }, 1000);
+
       const sw =
         this.$refs.horizontalScrollContainer.scrollWidth -
         this.$refs.horizontalScrollContainer.clientWidth;
-      const sl = this.$refs.horizontalScrollContainer.scrollLeft;
-      const scrollRatio = sl > 0 ? sl / sw : 0;
 
-      this.parallaxCoefficient = scrollRatio;
       this.parallaxWidth = sw;
       this.horizontalAggregateWidth =
         this.$refs.horizontalScrollContainer.clientWidth;
@@ -211,6 +236,11 @@ export default {
   display: flex
   overflow-x: auto
   overflow-y: hidden
+  cursor: grab
+  -ms-overflow-style: none
+  scrollbar-width: none
+  &::-webkit-scrollbar
+    display: none
 
 .horizontal-scroll-capsule
   position: relative
@@ -218,4 +248,6 @@ export default {
   align-items: center
   display: flex
   margin-left: 5rem
+  &:last-of-type
+    margin-right: 20vw
 </style>

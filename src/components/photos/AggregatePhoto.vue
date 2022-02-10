@@ -1,24 +1,17 @@
 <template>
   <div
-    class="horizontal-aggregate-image-container"
-    ref="horizontalAggregateImageContainer"
+    class="aggregate-image-container"
+    :class="horizontal ? 'horizontal-aggregate-image-container' : ''"
   >
     <div
-      class="horizontal-aggregate-image-capsule"
-      ref="horizontalAggregateImageCapsule"
+      class="aggregate-image-capsule"
+      :class="horizontal ? 'horizontal-aggregate-image-capsule' : ''"
     >
-      <ul>
-        <li>ParallaxX: {{ parallaxX }}</li>
-        <li>itemPos: {{ itemPos }}</li>
-        <li>clientW: {{ clientW }}</li>
-        <li>center: {{ center }}</li>
-        <li>boundX: {{ boundX }}</li>
-      </ul>
-
       <v-img
         :src="src"
         :position="position"
         :max-height="maxHeight"
+        :max-width="maxWidth"
         contain
       ></v-img>
     </div>
@@ -26,20 +19,12 @@
 </template>
 
 <script>
-import prismicHelper from "../../utility/prismicHelper.js";
-
 export default {
   props: {
     photoOrSeries: {
       type: Object,
     },
     containerHeight: {
-      type: Number,
-    },
-    parallaxCoefficient: {
-      type: Number,
-    },
-    parallaxWidth: {
       type: Number,
     },
     horizontalAggregateWidth: {
@@ -51,6 +36,9 @@ export default {
     scrolling: {
       type: Boolean,
     },
+    horizontal: {
+      type: Boolean,
+    },
   },
 
   data: () => ({
@@ -58,11 +46,6 @@ export default {
     maxHeight: null,
     parallaxAmount: 200,
     mounted: false,
-    parallaxX: null,
-    center: null,
-    itemPos: null,
-    clientW: null,
-    boundX: null,
   }),
 
   computed: {
@@ -76,40 +59,14 @@ export default {
 
   watch: {
     containerHeight: function (value) {
-      this.maxHeight = value;
-    },
-    parallaxCoefficient: function (value) {
-      //this.updateParallax();
+      this.horizontal && (this.maxHeight = value);
     },
     scrolling: function (value) {
-      value ? this.unfocus() : this.focus();
+      this.horizontal && value ? this.unfocus() : this.focus();
     },
   },
 
   methods: {
-    updateParallax() {
-      if (!this.mounted) return;
-      const itemCenterPos =
-        this.$el.getBoundingClientRect().x + this.$el.clientWidth / 2;
-      const scrollCenterPos =
-        this.parallaxWidth * this.parallaxCoefficient +
-        this.horizontalAggregateWidth / 2;
-
-      let transX = itemCenterPos - this.horizontalAggregateCenterX;
-      let ratio = transX == 0 ? 0 : -transX / this.horizontalAggregateWidth / 2;
-
-      this.center = this.horizontalAggregateCenterX;
-      this.parallaxX = transX;
-      this.itemPos = itemCenterPos;
-      this.clientW = this.$el.clientWidth;
-      this.boundX = this.$el.getBoundingClientRect().x;
-
-      transX = ratio * this.parallaxAmount;
-
-      this.$el.querySelector(
-        ".horizontal-aggregate-image-capsule"
-      ).style.transform = "translateX(" + transX + "px)";
-    },
     unfocus() {
       if (!this.mounted) return;
       this.$el.querySelector(
@@ -118,6 +75,9 @@ export default {
       this.$el.querySelector(
         ".horizontal-aggregate-image-capsule"
       ).style.transform = "translateX(0px)";
+      this.$el.querySelector(
+        ".horizontal-aggregate-image-capsule"
+      ).style.opacity = "1";
     },
     focus() {
       if (!this.mounted) return;
@@ -125,35 +85,53 @@ export default {
         this.$el.getBoundingClientRect().x + this.$el.clientWidth / 2;
       const centerDiff = this.horizontalAggregateCenterX - itemCenterPos;
 
-      if (Math.abs(centerDiff) <= this.horizontalAggregateWidth / 2) {
+      if (Math.abs(centerDiff) <= this.$el.clientWidth / 2) {
         // Picture is center and should be focused
+        this.$el.querySelector(
+          ".horizontal-aggregate-image-capsule"
+        ).style.transition = "1s ease-in-out";
+        this.$el.querySelector(
+          ".horizontal-aggregate-image-capsule"
+        ).style.transform = "translateX(" + centerDiff + "px)";
       } else if (centerDiff > 0) {
         // Picture is to the right and should be pushed away to the right
         this.$el.querySelector(
           ".horizontal-aggregate-image-capsule"
-        ).style.transition = "1s ease-in-out";
+        ).style.transition = "500ms ease-in-out";
         this.$el.querySelector(
           ".horizontal-aggregate-image-capsule"
         ).style.transform = "translateX(-" + this.parallaxAmount + "px)";
+        this.$el.querySelector(
+          ".horizontal-aggregate-image-capsule"
+        ).style.opacity = "0";
       } else {
         // Picture is left and should be pushed away to the left
         this.$el.querySelector(
           ".horizontal-aggregate-image-capsule"
-        ).style.transition = "1s ease-in-out";
+        ).style.transition = "500ms ease-in-out";
         this.$el.querySelector(
           ".horizontal-aggregate-image-capsule"
         ).style.transform = "translateX(+" + this.parallaxAmount + "px)";
+        this.$el.querySelector(
+          ".horizontal-aggregate-image-capsule"
+        ).style.opacity = "0";
+      }
+    },
+    initializeMe() {
+      if (this.horizontal) {
+        this.maxHeight = this.containerHeight;
+      } else {
+        console.log(this.$el.parentElement.parentElement.clientWidth);
+        //this.maxWidth = this.$el.parentElement.clientWidth;
       }
     },
   },
 
-  created() {
-    this.maxHeight = this.containerHeight;
-  },
+  created() {},
 
   mounted() {
     this.mounted = true;
-    //console.log(this.$el.querySelector(".horizontal-aggregate-image-capsule"));
+    this.initializeMe();
   },
 };
 </script>

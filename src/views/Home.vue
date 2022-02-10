@@ -1,5 +1,8 @@
 <template>
-  <photo-aggregate aggregate-id="home_aggregate" horizontal></photo-aggregate>
+  <photo-aggregate
+    aggregate-id="home_aggregate"
+    :horizontal="$vuetify.breakpoint.mdAndUp"
+  ></photo-aggregate>
 </template>
 
 <script>
