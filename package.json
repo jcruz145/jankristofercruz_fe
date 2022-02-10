@@ -10,6 +10,7 @@
     "@prismicio/client": "^5.1.1",
     "@prismicio/vue": "^2.1.0",
     "core-js": "^3.6.5",
+    "lodash": "^4.17.21",
     "prismic-dom": "^2.2.7",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
