@@ -244,10 +244,10 @@ export default {
 
 .horizontal-scroll-capsule
   position: relative
-  max-width: 60vw
+  max-width: 70vw
   align-items: center
   display: flex
-  margin-left: 5rem
+  padding-left: 5rem
   &:last-of-type
     margin-right: 20vw
 </style>

@@ -11,11 +11,11 @@ const routes = [
     name: 'Home',
     component: Home
   },
-  {
-    path: '/prismic-test',
-    name: 'Prismic Test',
-    component: PrismicTest
-  }
+  // {
+  //   path: '/prismic-test',
+  //   name: 'Prismic Test',
+  //   component: PrismicTest
+  // }
 ]
 
 const router = new VueRouter({
