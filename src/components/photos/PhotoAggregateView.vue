@@ -18,6 +18,7 @@
       </div>
     </div>
     <div v-else class="photo-aggregate-view__container">
+      <!-- <pre>{{ JSON.stringify(processedAggregateView, null, 2) }}</pre> -->
       <div
         v-for="(section, sectionIdx) of processedAggregateView"
         :key="sectionIdx"
@@ -35,7 +36,6 @@
                 :key="itemIdx"
                 class="photo-aggregate-view__item"
               >
-                <!-- <pre>{{ JSON.stringify(item, null, 2) }}</pre> -->
                 <photo-aggregate-view-photo
                   :scroll-data="scrollData"
                   :photo-data="item"
@@ -44,7 +44,6 @@
             </template>
             <template v-else>
               <div class="photo-aggregate-view__item">
-                <!-- <pre>{{ JSON.stringify(column, null, 2) }}</pre> -->
                 <photo-aggregate-view-photo
                   :scroll-data="scrollData"
                   :photo-data="column"
@@ -56,7 +55,6 @@
         <template v-else>
           <div class="photo-aggregate-view__column full">
             <div class="photo-aggregate-view__item">
-              <!-- <pre>{{ JSON.stringify(section, null, 2) }}</pre> -->
               <photo-aggregate-view-photo
                 :scroll-data="scrollData"
                 :photo-data="section"
@@ -173,6 +171,10 @@ export default {
               normalBuffer.push(minorBuffer);
               minorBuffer = [];
             }
+            if (normalBuffer.length >= 2) {
+              aggregateView.push(normalBuffer);
+              normalBuffer = [];
+            }
             normalBuffer.push(data);
           } else {
             if (minorBuffer.length >= 2) {
@@ -203,7 +205,6 @@ export default {
 
 <style lang="sass" scoped>
 .photo-aggregate-view
-  // margin-top: 70px
   display: flex
   justify-content: center
 
