@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import PrismicTest from '../views/PrismicTest.vue'
+//import Prototype from '../views/Prototype.vue'
+//import PrismicTest from '../views/PrismicTest.vue'
 
 Vue.use(VueRouter)
 
@@ -11,6 +12,11 @@ const routes = [
     name: 'Home',
     component: Home
   },
+  // {
+  //   path: '/proto',
+  //   name: 'Prototype',
+  //   component: Prototype
+  // },
   // {
   //   path: '/prismic-test',
   //   name: 'Prismic Test',

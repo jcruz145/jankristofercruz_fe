@@ -1,16 +1,33 @@
 <template>
-  <photo-aggregate
-    aggregate-id="home_aggregate"
-    :horizontal="$vuetify.breakpoint.mdAndUp"
-  ></photo-aggregate>
+  <photo-aggregate-view :aggregate-id="aggregateID"></photo-aggregate-view>
 </template>
 
 <script>
-import PhotoAggregate from "../components/photos/PhotoAggregate.vue";
+import PhotoAggregateView from "../components/photos/PhotoAggregateView.vue";
 
 export default {
-  name: "Home",
+  components: {
+    PhotoAggregateView,
+  },
 
-  components: { PhotoAggregate },
+  props: {},
+
+  data: () => ({
+    mounted: false,
+    processedCollection: null,
+    aggregateID: "home_aggregate",
+  }),
+
+  computed: {},
+
+  methods: {},
+
+  watch: {},
+
+  created() {},
+
+  mounted() {
+    this.mounted = true;
+  },
 };
 </script>
