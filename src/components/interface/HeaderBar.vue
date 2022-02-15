@@ -4,11 +4,18 @@
       Jan <br />
       Kristofer <br />Cruz
     </div>
+    <div class="header-bar__spacer"></div>
+    <div class="header-bar__nav">
+      <v-btn icon @click.stop="openContactDrawer"
+        ><v-icon>mdi-backburger</v-icon></v-btn
+      >
+    </div>
   </div>
 </template>
 
 <script>
 import fancy from "../../utility/fancy";
+import { mapActions } from "vuex";
 
 export default {
   props: {},
@@ -17,11 +24,12 @@ export default {
     mounted: false,
   }),
 
+  methods: {
+    ...mapActions(["openContactDrawer"]),
+  },
+
   mounted() {
     this.mounted = true;
-
-    // fancy.flowInText(this.$el.querySelector(".header-bar__title"));
-    // console.log(this.$el.querySelector(".header-bar__title"));
   },
 };
 </script>
@@ -33,13 +41,11 @@ export default {
   align-items: center
   justify-content: left
   padding: 1rem
-  // position: sticky
-  // position: -webkit-sticky
-  // top: 0
-  // left: 0
-  z-index: 10
   &__title
     font-size: 20px
     font-family: 'Staatliches', sans-serif !important
     line-height: 19px
+  &__spacer
+    flex-grow: 99
+    height: 100%
 </style>

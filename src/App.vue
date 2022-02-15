@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <header-bar></header-bar>
+    <contact-drawer></contact-drawer>
     <v-main>
       <router-view />
     </v-main>
@@ -9,10 +10,11 @@
 
 <script>
 import HeaderBar from "./components/interface/HeaderBar.vue";
+import ContactDrawer from "./components/interface/ContactDrawer.vue";
 export default {
   name: "App",
 
-  components: { HeaderBar },
+  components: { HeaderBar, ContactDrawer },
 
   data: () => ({
     //
