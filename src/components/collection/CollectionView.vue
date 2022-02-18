@@ -159,7 +159,8 @@ pre
     align-items: left
     justify-content: space-between
     flex-direction: column
-    padding: 6rem
+    padding: 3rem
+    padding-left: 10rem
     &:before
       content: ' '
       height: 2.5rem

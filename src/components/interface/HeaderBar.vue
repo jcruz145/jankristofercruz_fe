@@ -1,6 +1,9 @@
 <template>
-  <div class="header-bar">
-    <div class="header-bar__title" :class="dark ? 'dark' : ''">
+  <div
+    class="header-bar"
+    :class="$vuetify.breakpoint.xsOnly ? 'horizontal' : ''"
+  >
+    <div class="header-bar__title">
       Jan <br />
       Kristofer <br />Cruz
     </div>
@@ -30,18 +33,28 @@ export default {
 
 <style lang="sass" scoped>
 .header-bar
+  position: absolute
+  left: 0
+  top: 0
+  z-index: 1000
   display: flex
-  width: 100%
-  align-items: center
+  align-items: top
   justify-content: left
   padding: 1rem
+  background: black
+  color: white
+  height: 100vh
+  border-right: 1px solid white
   &__title
     font-size: 20px
     font-family: 'Staatliches', sans-serif !important
     line-height: 19px
-    .dark
-      color: white
   &__spacer
     flex-grow: 99
     height: 100%
+  &.horizontal
+    height: auto
+    width: 100vw
+    border-right: 0
+    border-bottom: 1px solid white
 </style>

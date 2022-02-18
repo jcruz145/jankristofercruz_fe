@@ -113,6 +113,7 @@ pre
     overflow-x: hidden
     overflow-y: auto
     position: relative
+    padding-top: 80px
   &__title-part
     padding: 2rem
     font-family: 'Monsterrat', sans-serif

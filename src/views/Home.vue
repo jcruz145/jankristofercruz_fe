@@ -1,7 +1,5 @@
 <template>
   <div>
-    <header-bar></header-bar>
-    <contact-drawer></contact-drawer>
     <photo-aggregate-view :aggregate-id="aggregateID"></photo-aggregate-view>
   </div>
 </template>
