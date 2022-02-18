@@ -46,6 +46,41 @@ export default {
       throw error
     }
   },
+  async getCollectionItems(prismic, collectionId) {
+    let collection = {}, exect=[];
+    collection = await prismic.client.getByUID('photo_collection', collectionId);
+
+    collection.data.photos.forEach((item, i) => {
+      exect.push((async () => {
+        switch (item.photo.type) {
+          case "photo_series":
+            collection.data.photos[i].photo.photo_object =
+              await this.getCoverPhotoObjectInSeries(
+                prismic,
+                item.photo.uid
+              );
+            break;
+
+          case "photo":
+            collection.data.photos[i].photo.photo_object =
+              await this.getPhotoObject(prismic, item.photo.uid);
+            break;
+          
+          case "photo_collection":
+            collection.data.photos[i].photo.photo_object =
+              await this.getCollectionItems(prismic, item.photo.uid);
+            break;
+
+          default:
+            break;
+        }
+      })());
+    });
+
+    await Promise.all(exect);
+
+    return collection;
+  },
   async getAggregateItems(prismic, aggregateId) {
     let aggregate=[], exect = [];
 

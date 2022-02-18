@@ -1,20 +1,14 @@
 <template>
   <v-app>
-    <header-bar></header-bar>
-    <contact-drawer></contact-drawer>
-    <v-main>
-      <router-view />
-    </v-main>
+    <router-view />
   </v-app>
 </template>
 
 <script>
-import HeaderBar from "./components/interface/HeaderBar.vue";
-import ContactDrawer from "./components/interface/ContactDrawer.vue";
 export default {
   name: "App",
 
-  components: { HeaderBar, ContactDrawer },
+  components: {},
 
   data: () => ({
     //
@@ -26,6 +20,7 @@ export default {
 
 <style lang="sass">
 @import url('https://fonts.googleapis.com/css2?family=Staatliches&display=swap')
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap')
 @import './utility/fancy.sass'
 
 $title-font: 'Staatliches'

@@ -1,14 +1,8 @@
 <template>
   <div class="header-bar">
-    <div class="header-bar__title">
+    <div class="header-bar__title" :class="dark ? 'dark' : ''">
       Jan <br />
       Kristofer <br />Cruz
-    </div>
-    <div class="header-bar__spacer"></div>
-    <div class="header-bar__nav">
-      <v-btn icon @click.stop="openContactDrawer"
-        ><v-icon>mdi-backburger</v-icon></v-btn
-      >
     </div>
   </div>
 </template>
@@ -18,7 +12,7 @@ import fancy from "../../utility/fancy";
 import { mapActions } from "vuex";
 
 export default {
-  props: {},
+  props: ["dark"],
 
   data: () => ({
     mounted: false,
@@ -45,6 +39,8 @@ export default {
     font-size: 20px
     font-family: 'Staatliches', sans-serif !important
     line-height: 19px
+    .dark
+      color: white
   &__spacer
     flex-grow: 99
     height: 100%

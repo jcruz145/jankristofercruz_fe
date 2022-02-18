@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-//import Prototype from '../views/Prototype.vue'
+import Collection from '../views/Collection.vue'
 //import PrismicTest from '../views/PrismicTest.vue'
 
 Vue.use(VueRouter)
@@ -12,11 +12,11 @@ const routes = [
     name: 'Home',
     component: Home
   },
-  // {
-  //   path: '/proto',
-  //   name: 'Prototype',
-  //   component: Prototype
-  // },
+  {
+    path: '/collections/:id',
+    name: 'Collection',
+    component: Collection
+  },
   // {
   //   path: '/prismic-test',
   //   name: 'Prismic Test',
