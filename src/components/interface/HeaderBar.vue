@@ -3,7 +3,7 @@
     class="header-bar"
     :class="$vuetify.breakpoint.xsOnly ? 'horizontal' : ''"
   >
-    <div class="header-bar__title">
+    <div class="header-bar__title" @click.stop="handleHomeClick">
       Jan <br />
       Kristofer <br />Cruz
     </div>
@@ -23,6 +23,9 @@ export default {
 
   methods: {
     ...mapActions(["openContactDrawer"]),
+    handleHomeClick(e) {
+      this.$router.push("/");
+    },
   },
 
   mounted() {

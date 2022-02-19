@@ -1,54 +1,41 @@
 <template>
-  <!-- <pre>{{ JSON.stringify(collectionData, null, 2) }}</pre> -->
-  <div class="collection__container">
-    <!-- <pre>{{ JSON.stringify(collectionData, null, 2) }}</pre> -->
-    <section class="collection__title-section">
-      <div class="collection__title-part">
-        <h1 class="collection__title">{{ collectionData.data.title }}</h1>
-        <p class="collection__description">
-          {{ collectionData.data.description }}
+  <!-- <pre>{{ JSON.stringify(mainData, null, 2) }}</pre> -->
+  <div class="main__container">
+    <!-- <pre>{{ JSON.stringify(collectionIDs, null, 2) }}</pre> -->
+    <section class="main__title-section">
+      <div class="main__title-part">
+        <h1 class="main__title">{{ mainData.data.title }}</h1>
+        <p class="main__description">
+          {{ mainData.data.message }}
         </p>
       </div>
-      <div class="collection__footer-part">
-        <random-collection-button>
-          View Other Collection
-        </random-collection-button>
+      <div class="main__footer-part">
+        <random-collection-button></random-collection-button>
         <v-spacer></v-spacer>
-        <div class="collection__footer-part__mouse">
+        <div class="main__footer-part__mouse">
           <mouse-scroll></mouse-scroll>
         </div>
       </div>
     </section>
-    <section class="collection__cover-section">
-      <collection-cover-photo
-        :image-data="collectionData.data.cover_image"
-        :scroll-data="scrollData"
-        :loaded="mountedAndLoaded"
-      ></collection-cover-photo>
-    </section>
-    <section class="collection__showcase">
-      <div
-        class="collection__item"
-        v-for="item in photoData"
-        :key="item.photo.uid"
-      >
-        <collection-view-photo
-          v-if="item.photo.type == 'photo'"
-          :photo-data="item.photo"
-        ></collection-view-photo>
-        <collection-view-collection v-else :collection-id="item.photo.uid">
-        </collection-view-collection>
+    <section class="main__showcase">
+      <div class="main__item" v-for="item in collectionData" :key="item.uid">
+        <collection-cover-photo
+          :image-data="item.data.cover_image"
+          :scroll-data="scrollData"
+          :loaded="loaded"
+        ></collection-cover-photo>
+        <main-view-collection
+          :scroll-data="scrollData"
+          :collection-data="item"
+        ></main-view-collection>
       </div>
     </section>
-
-    <section class="collection__endcap">
+    <section class="main__endcap">
       <div class="main__title-part">
         <h1 class="main__title">End.</h1>
       </div>
       <div class="main__footer-part">
-        <random-collection-button>
-          View Other Collection
-        </random-collection-button>
+        <random-collection-button></random-collection-button>
         <v-spacer></v-spacer>
       </div>
     </section>
@@ -57,22 +44,19 @@
 
 <script>
 import prismicHelper from "../../utility/prismicHelper";
-import CollectionCoverPhoto from "./CollectionCoverPhoto.vue";
-import CollectionViewPhoto from "./CollectionViewPhoto.vue";
-import CollectionViewCollection from "./CollectionViewCollection.vue";
-import RandomCollectionButton from "../interface/RandomCollectionButton.vue";
+import CollectionCoverPhoto from "../collection/CollectionCoverPhoto.vue";
 import MouseScroll from "../interface/MouseScroll.vue";
-import { mapActions } from "vuex";
+import MainViewCollection from "./MainViewCollection.vue";
+import RandomCollectionButton from "../interface/RandomCollectionButton.vue";
 
 export default {
   props: ["collectionId"],
 
   components: {
-    CollectionCoverPhoto,
-    CollectionViewPhoto,
-    CollectionViewCollection,
-    RandomCollectionButton,
     MouseScroll,
+    MainViewCollection,
+    CollectionCoverPhoto,
+    RandomCollectionButton,
   },
 
   data: () => ({
@@ -84,7 +68,7 @@ export default {
       scrollX: 0,
       scrollWidth: 0,
     },
-    collectionData: {
+    mainData: {
       uid: "",
       data: {
         title: "",
@@ -99,7 +83,8 @@ export default {
         },
       },
     },
-    photoData: [],
+    collectionData: [],
+    collectionIDs: [],
   }),
 
   computed: {
@@ -109,21 +94,39 @@ export default {
   },
 
   methods: {
-    ...mapActions(["setCurrentCollection"]),
     async initializeCollectionData() {
-      let response = await prismicHelper.getCollectionItems(
-        this.$prismic,
-        this.$route.params.id
-      );
+      let response = await this.$prismic.client.getSingle("hom");
+      let exect = [];
 
-      this.collectionData = response;
-      this.collectionData.data.photos.forEach((item, index) => {
-        this.photoData.push(item);
+      response.data.home_entries.forEach((item, i) => {
+        exect.push(
+          (async () => {
+            switch (item.home_entry.type) {
+              case "photo_collection":
+                response.data.home_entries[i].home_entry.entry_object =
+                  await prismicHelper.getCollectionItems(
+                    this.$prismic,
+                    item.home_entry.uid
+                  );
+                break;
+
+              default:
+                break;
+            }
+          })()
+        );
+      });
+
+      await Promise.all(exect);
+
+      this.mainData = response;
+
+      this.mainData.data.home_entries.forEach((item) => {
+        this.collectionData.push(item.home_entry.entry_object);
+        this.collectionIDs.push(item.home_entry.uid);
       });
 
       this.loaded = true;
-      // console.log(JSON.stringify(this.collectionData.uid, null, 2));
-      this.setCurrentCollection(this.collectionData.uid);
     },
     handleScroll(e) {
       if (!this.mounted) return;
@@ -171,9 +174,12 @@ export default {
 
 <style lang="sass" scoped>
 pre
-  font-size: 8px
+  font-size: 10px
+  margin-left: 100px
+  overflow-x: hidden
+  overflow-y: scroll
 
-.collection
+.main
   &__container
     height: 100vh
     width: 100%
@@ -190,7 +196,6 @@ pre
     max-width: 1200px
     background-color: black
     color: white
-    align-items: left
     justify-content: space-between
     flex-direction: column
     padding: 3rem
@@ -201,10 +206,15 @@ pre
       display: block
 
   &__title-part
+  &__title
+    font-size: 3.625rem
+  &__description
+    font-size: 1.687rem
 
   &__footer-part
     display: flex
     justify-content: space-between
+    align-content: center
     &:before
       content: ' '
       height: 2.5rem
@@ -212,23 +222,14 @@ pre
     &__mouse
       display: flex
       align-items: center
-
-  &__title
-    font-size: 5.625rem
-  &__description
-    font-size: 1.687rem
-  &__cover-section
-    height: 100%
   &__showcase
-    align-items: center
+    //align-items: center
     display: flex
     width: auto
     height: 100%
-    margin: 0 15rem
+    background: white
   &__item
     display: flex
-    height: 70vh
-    max-height: 900px
   &__endcap
     display: flex
     flex: 0 0 auto

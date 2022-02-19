@@ -9,6 +9,11 @@
         </p>
       </h1>
     </div>
+    <div class="collection__button-part">
+      <random-collection-button>
+        View Another Collection
+      </random-collection-button>
+    </div>
     <div
       class="collection__item"
       v-for="item in photoData"
@@ -16,15 +21,23 @@
     >
       <v-img :src="item.photo.photo_object.photo.url"></v-img>
     </div>
+    <div class="collection__footer-part">
+      <random-collection-button>
+        View Another Collection
+      </random-collection-button>
+    </div>
   </div>
 </template>
 
 <script>
 import prismicHelper from "../../utility/prismicHelper";
+import RandomCollectionButton from "../interface/RandomCollectionButton.vue";
+import { mapActions } from "vuex";
+
 export default {
   props: ["collectionId"],
 
-  components: {},
+  components: { RandomCollectionButton },
 
   data: () => ({
     mounted: false,
@@ -54,6 +67,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(["setCurrentCollection"]),
     async initializeCollectionData() {
       let response = await prismicHelper.getCollectionItems(
         this.$prismic,
@@ -72,6 +86,7 @@ export default {
       });
 
       this.loaded = true;
+      this.setCurrentCollection(this.collectionData.uid);
     },
     handleScroll(e) {
       if (!this.mounted) return;
@@ -122,8 +137,17 @@ pre
     font-size: 5.626rem
   &__description
     font-size: 1.687rem
+  &__button-part
+    display: flex
+    justify-content: center
+    margin-bottom: 1rem
   &__item
     width: 100%
     display: block
     padding: 1rem 0.5rem
+  &__footer-part
+    display: flex
+    justify-content: center
+    padding: 3rem
+    background: black
 </style>

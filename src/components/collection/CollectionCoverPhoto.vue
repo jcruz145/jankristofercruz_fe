@@ -37,9 +37,6 @@ export default {
         this.imageData.dimensions.width / this.imageData.dimensions.height;
       this.maxHeight = this.$el.clientHeight;
       this.$el.firstElementChild.style.width = this.maxHeight * ratio + "px";
-      console.log("ratio: " + ratio);
-      console.log("height: " + this.maxHeight);
-      console.log("width: " + this.$el.firstElementChild.style.width);
     },
     handleWindowResize(e) {
       this.refreshSize();
@@ -79,7 +76,7 @@ export default {
   display: flex
   height: 100%
   width: 40vw
-  max-width: 800px
+  min-width: 600px
   overflow: hidden
   justify-content: center
   &__parallax-container
