@@ -134,9 +134,11 @@ pre
     font-family: 'Monsterrat', sans-serif
     line-height: 1.25
   &__title
-    font-size: 5.626rem
+    font-size: 2.5rem
+    line-height: 1
   &__description
-    font-size: 1.687rem
+    padding-top: .5rem
+    font-size: 1.25rem
   &__button-part
     display: flex
     justify-content: center
@@ -144,7 +146,7 @@ pre
   &__item
     width: 100%
     display: block
-    padding: 1rem 0.5rem
+    padding: 0 1rem 1rem 1rem
   &__footer-part
     display: flex
     justify-content: center

@@ -153,6 +153,7 @@ pre
   &__title
     font-size: 3.625rem
   &__description
+    padding-top: 1rem
     font-size: 1.687rem
 
   &__footer-part
