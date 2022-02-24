@@ -1,7 +1,5 @@
 <template>
-  <!-- <pre>{{ JSON.stringify(collectionData, null, 2) }}</pre> -->
   <div class="collection__container">
-    <!-- <pre>{{ JSON.stringify(collectionData, null, 2) }}</pre> -->
     <section class="collection__title-section">
       <div class="collection__title-part">
         <h1 class="collection__title">{{ collectionData.data.title }}</h1>
@@ -57,6 +55,7 @@
 
 <script>
 import prismicHelper from "../../utility/prismicHelper";
+
 import CollectionCoverPhoto from "./CollectionCoverPhoto.vue";
 import CollectionViewPhoto from "./CollectionViewPhoto.vue";
 import CollectionViewCollection from "./CollectionViewCollection.vue";
@@ -122,7 +121,6 @@ export default {
       });
 
       this.loaded = true;
-      // console.log(JSON.stringify(this.collectionData.uid, null, 2));
       this.setCurrentCollection(this.collectionData.uid);
     },
     handleScroll(e) {

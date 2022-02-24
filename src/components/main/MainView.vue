@@ -84,7 +84,6 @@ export default {
       },
     },
     collectionData: [],
-    collectionIDs: [],
   }),
 
   computed: {
@@ -95,38 +94,41 @@ export default {
 
   methods: {
     async initializeCollectionData() {
-      let response = await this.$prismic.client.getSingle("hom");
-      let exect = [];
+      try {
+        let response = await this.$prismic.client.getSingle("hom");
+        let exect = [];
 
-      response.data.home_entries.forEach((item, i) => {
-        exect.push(
-          (async () => {
-            switch (item.home_entry.type) {
-              case "photo_collection":
-                response.data.home_entries[i].home_entry.entry_object =
-                  await prismicHelper.getCollectionItems(
-                    this.$prismic,
-                    item.home_entry.uid
-                  );
-                break;
+        response.data.home_entries.forEach((item, i) => {
+          exect.push(
+            (async () => {
+              switch (item.home_entry.type) {
+                case "photo_collection":
+                  response.data.home_entries[i].home_entry.entry_object =
+                    await prismicHelper.getCollectionItems(
+                      this.$prismic,
+                      item.home_entry.uid
+                    );
+                  break;
 
-              default:
-                break;
-            }
-          })()
-        );
-      });
+                default:
+                  break;
+              }
+            })()
+          );
+        });
 
-      await Promise.all(exect);
+        await Promise.all(exect);
 
-      this.mainData = response;
+        this.mainData = response;
 
-      this.mainData.data.home_entries.forEach((item) => {
-        this.collectionData.push(item.home_entry.entry_object);
-        this.collectionIDs.push(item.home_entry.uid);
-      });
+        this.mainData.data.home_entries.forEach((item) => {
+          this.collectionData.push(item.home_entry.entry_object);
+        });
 
-      this.loaded = true;
+        this.loaded = true;
+      } catch (error) {
+        throw error;
+      }
     },
     handleScroll(e) {
       if (!this.mounted) return;
@@ -223,7 +225,6 @@ pre
       display: flex
       align-items: center
   &__showcase
-    //align-items: center
     display: flex
     width: auto
     height: 100%

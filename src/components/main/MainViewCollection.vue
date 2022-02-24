@@ -2,17 +2,15 @@
   <div class="mv__container">
     <div class="mv__title" @click.stop="handleCollectionClick">
       {{ collectionData.data.title }}
-      <!-- <pre>{{ JSON.stringify(collectionData, null, 2) }}</pre> -->
     </div>
     <div class="mv__photos">
       <div
         class="mv__photo"
-        :class="item.impact == 'major' ? 'full' : ''"
         v-for="item in photoData"
         :key="item.uid"
         @click.stop="handleCollectionClick"
       >
-        <main-view-photo :photo="item.photo"></main-view-photo>
+        <photo-loader :photo="item.photo"></photo-loader>
       </div>
     </div>
     <div class="mv__bottom-links">
@@ -25,11 +23,11 @@
   </div>
 </template>
 <script>
-import MainViewPhoto from "./MainViewPhoto.vue";
+import PhotoLoader from "../interface/PhotoLoader.vue";
 export default {
   props: ["collectionData", "scrollData"],
 
-  components: { MainViewPhoto },
+  components: { PhotoLoader },
 
   data: () => ({
     photoData: [],
@@ -64,12 +62,16 @@ export default {
         ratio = 0;
       }
 
-      this.$el.querySelector(".mv__title").style.transform =
-        "translateX(" + ratio * this.maxParallax + "px)";
+      this.$el.querySelector(".mv__title").style.transform = `translateX(${
+        ratio * this.maxParallax
+      }px)`;
     },
     bottomLinkParallax() {
-      const itemWidth = this.$el.querySelector(".mv__bottom-links").clientWidth;
+      const $bottomLinks = this.$el.querySelector(".mv__bottom-links");
+
+      const itemWidth = $bottomLinks.clientWidth;
       const windowMid = window.innerWidth / 2;
+
       const leftContainerBound = this.$el.getBoundingClientRect().x;
       const midContainerBound = leftContainerBound + this.$el.clientWidth / 2;
 
@@ -80,16 +82,15 @@ export default {
 
       if (diff < -leftRange) {
         diff = -leftRange;
-        this.$el.querySelector(".mv__bottom-links").style.opacity = "0";
+        $bottomLinks.style.opacity = "0";
       } else if (diff > rightRange) {
         diff = rightRange;
-        this.$el.querySelector(".mv__bottom-links").style.opacity = "0";
+        $bottomLinks.style.opacity = "0";
       } else {
-        this.$el.querySelector(".mv__bottom-links").style.opacity = "1";
+        $bottomLinks.style.opacity = "1";
       }
 
-      this.$el.querySelector(".mv__bottom-links").style.transform =
-        "translateX(" + diff + "px)";
+      $bottomLinks.style.transform = `translateX(${diff}px)`;
     },
     handleScrolling() {
       this.titleParallax();

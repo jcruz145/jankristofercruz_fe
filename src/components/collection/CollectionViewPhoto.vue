@@ -1,11 +1,7 @@
 <template>
   <div class="collection-view-photo">
     <!-- <pre>{{ JSON.stringify(photoData, null, 2) }}</pre> -->
-    <v-img
-      :max-height="maxHeight"
-      :max-width="maxWidth"
-      :src="photoData.photo_object.photo.url"
-    ></v-img>
+    <photo-loader :photo="photoData.photo_object.photo"> </photo-loader>
     <div class="collection-view-photo__captions">
       <p>
         <strong>{{ photoData.photo_object.title }}</strong>
@@ -21,7 +17,12 @@
 </template>
 
 <script>
+import PhotoLoader from "../interface/PhotoLoader.vue";
 export default {
+  components: {
+    PhotoLoader,
+  },
+
   props: ["photoData"],
 
   data: () => ({
@@ -61,6 +62,8 @@ pre
 .collection-view-photo
   display: flex
   flex-direction: row
+  height: 100%
+
   &__captions
     margin: 0 15rem 0 1rem
     width: 12rem

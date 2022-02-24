@@ -17,11 +17,10 @@
   </div>
 </template>
 <script>
-import MainViewPhoto from "./MainViewPhoto.vue";
 export default {
   props: ["collectionData"],
 
-  components: { MainViewPhoto },
+  components: {},
 
   data: () => ({
     photoData: [],
